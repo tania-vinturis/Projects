@@ -1,0 +1,1 @@
+Utilizing fundamental C concepts such as **variables, loops, and functions**, I created an arithmetic calculator capable of accepting a string input, analyzing it, and performing the operations accurately.
