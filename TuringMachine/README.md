@@ -20,6 +20,7 @@
 - EXECUTE operation - it is implemented with a tail and a linked list.
 
 #### There will be those comands read from the keyboard. The UPDATE operations will be pushed in a tail as they are read, and the operation EXECUTE will pop one by one these UPDATE operations and will execute them. ####
+I implemented functions for reach operation type and for each operation in particular. For code modularization, I used header files in which I declared all the structures I need (stack, tail, lists), in order to have a short and easy to understand main function. I also used different files for basic functions such as push/pop and other that were necessary for the data structures I used.
 
 
 
