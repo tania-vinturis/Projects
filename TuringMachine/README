@@ -1,0 +1,16 @@
+In fisierul band.h se afla definirea structurii de banda, implementat cu ajutorul unei structuri de lista dublu inlantuita cu santinela, care include degetul (pointerul la celula curenta a benzii), continand si antetele functiilor pentru a aloca o celula, a initializa banda, a distruge banda si a afisa banda.
+In fisierul band.c se afla implementarea acestor functii.
+In fisierul coada.h se afla definirea unei cozi cu ajutorul unei liste simplu inlantuite, cat si antetele functiilor de initializare, introducere element, extragere element si distrugere.
+In fisierul coada.c se afla implementarea acestor functii.
+In fisierul stiva.h se afla definirea unei stive cu ajutorul unei liste simplu inlantuite, care retine informatii de tip TCelula2 (pentru a retine pointerii aferenti operatiilor care trebuie introduse in stive). In acest header se afla si antetele functiilor de push, pop si distrugere stiva.
+In fisierul stiva.c se afla implementarea acestor functii.
+In fisierul main.c se afla toate functiile necesare pentru efectuarea operatiilor din enuntul problemei: MOVE_LEFT, MOVE_RIGHT, MOVE_LEFT_CHAR, MOVE_RIGHT_CHAR, WRITE, INSERT_LEFT, INSERT_RIGHT, SHOW_CURRENT, SHOW, UNDO, REDO, EXECUTE.
+Am implementat o functie numita citireFisier(), cu ajutorul careia citesc datele de intrare din fisierul tema1.in. Citesc mai intai numarul de operatii, apoi operatiile. Pe masura ce se citesc operatiile, identific ce operatii sunt (fie ca sunt WRITE, MOVE_LEFT etc) cu ajutorul functiei strstr, adaungad in coada operatiile care nu se executa de indata ce sunt intalnite. De asemenea, daca sunt operatii care se executa atunci cand sunt intalnite, apelez funtia aferenta operatiei.
+In functia EXECUTE, verific pe rand operatiile din coada si apelez functia corespunzatoare operatiei gasite, apoi elimin elementul.
+Daca intalnesc functia MOVE_LEFT sau MOVE_RIGHT, adaug in stiva de undo pointerul corespunzator operatiei. Procedez la fel si pentru MOVE_RIGHT.
+Daca intalnesc operatia de WRITE, verific daca stiva de undo este goala, iar daca nu este goala, o golesc, deoarece operatiile de UNDO si REDO nu pot fi intercalate cu operatii de WRITE.
+In functia de UNDO verific daca stiva de undo nu este goala, adaug pointerul pozitie curente in stiva pentru redo si apoi extrag pointerul din varful stivei si il setez ca pozitie curenta.
+In functia de REDO verific daca stiva de redo nu este goala, adaug pointerul pozitie curente in stiva pentru undo si apoi extrag pointerul din varful stivei si il setez ca pozitie curenta.
+In functia main doar apelez functia de citireFisier().
+
+Nu stiu ce fac gresit, dar pe local imi da 100/100, iar pe vmchecker 45/100
