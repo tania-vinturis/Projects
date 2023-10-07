@@ -19,7 +19,7 @@
 - UNDO/REDO operations
 - EXECUTE operation - it is implemented with a tail and a linked list.
 
-### There will be those comands read from the keyboard. The UPDATE operations will be pushed in a tail as they are read, and the operation EXECUTE will pop one by one these UPDATE operations and will execute them. ###
+#### There will be those comands read from the keyboard. The UPDATE operations will be pushed in a tail as they are read, and the operation EXECUTE will pop one by one these UPDATE operations and will execute them. ####
 
 
 
