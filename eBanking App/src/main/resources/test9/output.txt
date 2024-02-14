@@ -1,0 +1,9 @@
+insufficient amount in account for buying premium option
+{"stocks":[],"accounts":[{"currencyname":"USD","amount":"1000.00"},{"currencyname":"EUR","amount":"0.00"}]}
+{"stocks":[],"accounts":[{"currencyname":"USD","amount":"900.00"},{"currencyname":"EUR","amount":"0.00"}]}
+Insufficient amount in account usd for exchange
+{"stocks":[],"accounts":[{"currencyname":"USD","amount":"900.00"},{"currencyname":"EUR","amount":"0.00"}]}
+{"stocks":[],"accounts":[{"currencyname":"USD","amount":"105.00"},{"currencyname":"EUR","amount":"500.00"}]}
+{"stocksToBuy": ["MSFT", "AMZN"]}
+{"stocks":[],"accounts":[{"currencyname":"USD","amount":"205.00"},{"currencyname":"EUR","amount":"500.00"}]}
+{"stocks":[{"stockname":"AMZN","amount":1}],"accounts":[{"currencyname":"USD","amount":"57.58"},{"currencyname":"EUR","amount":"500.00"}]}
