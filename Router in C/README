@@ -1,54 +1,83 @@
-Repository for the first homework of the Communication Networks class. In this homework the students will implement the dataplane of a router.
+# Router Dataplane Implementation
 
-Subcerinte rezolvate:
-1. Procesul de dirijare
-2. LPM
-3. Protocolul ICMP
+## Project Overview
 
-Descriere rezolvare:
+This project implements the **dataplane** component of a router in C, handling packet forwarding based on a static routing table. The dataplane processes each packet by finding the appropriate next hop and handling the packet according to routing rules, including ICMP protocol responses. The routing table is provided as an input file and remains static throughout execution.
 
-in main:
-    - fac toate initializarile si alocarile necesare pt route_table
-    - folosesc arp static pentru aceasta implementare
-    - qsort folosit pt ordonarea route_table (pt cautarea binara)
-    - in bucla while imi procesez pachetele astfel:
-        - verific daca pachetul este de tip IP
-        - calculez checksum-ul cu functia din scheletul de cod
-        - calculez cea mai buna ruta posibila
-        - daca acea ruta este gasita, verific TTL
-            - daca TTL > 1 si daca pachetul este pt router, intra in cazul ICMP ECHO REPLY
-            - daca pachetul nu e pt router, se decrementeaza TTL-ul, recalculez checksumul, aflu next_destination cu functia get_arp_entry, copiez in dhost adresa mac a destinatiei urmatoare si apelez functia send_to_link.
-            - daca TTL <= 1, intra in cazul de ICMP TIMEOUT
-        - daca ruta nu e gasita, intra in cazul ICMP DESTINATION UREACHABLE
+The **control plane** is not included in this project, meaning no dynamic routing protocols (RIP, OSPF, BGP) are implemented. Instead, the focus is strictly on the dataplane, where the router uses pre-loaded routing table entries to make forwarding decisions.
 
-- get_best_route_recursive:
-    - este LPM facut cu ajutorul cautarii binare
+## Key Functionalities
 
-- get_best_route:
-    - apelez functia recursiva cu parametrii corespunzatori
+1. **Routing Process**:
+   - Implements packet processing and forwarding based on a static routing table, including handling TTL, ICMP responses, and checksums.
+   
+2. **Longest Prefix Match (LPM)**:
+   - Utilizes binary search for efficient LPM using `qsort` to sort the routing table by mask and prefix, optimizing routing lookups.
+   
+3. **ICMP Protocol Support**:
+   - Handles ICMP responses for Echo Reply, Timeout, and Destination Unreachable messages.
 
-- get_arp_entry:
-    - functia pt a gasi o intrare in tabela arp care are un anumit IP
+## Detailed Description of Implementation
 
-- cmp:
-    -functia pe care o folosesc pt qsort care sortaza dupa masca si prefix doua intrari in route_table
+### Main Function (main.c)
 
-- function_ip_header:
-    - functie pt a schimba campurile unui ip_hdr pt a nu avea cod repetitiv
+The main function initializes the router, allocates resources, and continuously processes packets in a loop:
+- **Initialization**:
+  - Sets up the `route_table` and loads entries.
+  - Utilizes a static ARP table for resolving IP to MAC addresses in this implementation.
+  - Sorts the `route_table` using `qsort` for binary search efficiency.
+  
+- **Packet Processing Loop**:
+  - Each incoming packet is processed as follows:
+    - **Type Check**: Verifies that the packet is of IP type.
+    - **Checksum Calculation**: Validates checksum using a provided function.
+    - **Route Lookup**: Calculates the best route using the `get_best_route` function.
+    - **TTL and ICMP Handling**:
+      - If a route is found:
+        - **TTL Check**: If `TTL > 1`, proceed with routing; otherwise, trigger an ICMP Timeout.
+        - **ICMP Echo Reply**: If the packet is addressed to the router, an Echo Reply is sent.
+        - **Packet Forwarding**: 
+          - Decrement TTL, recalculate checksum, and find the next hop using `get_arp_entry`.
+          - Update the MAC address in `dhost` to the destination’s MAC and forward the packet via `send_to_link`.
+      - If no route is found, trigger an ICMP Destination Unreachable.
 
-- helper_icmp
-    - construiesc un antet ETH nou
-    - construiesc un antet ICMP
-    - copiez ip-ul si primii 8 octeti din payload
-    - calculez checksumul pt antetul IP
-    - checksum pt icmp
-    - trimit pachetul
+### Helper Functions
 
-- send_icmp_timeout:
-    - apelez functia helper_icmp cu parametrii pt un icmp timeout
+- **get_best_route_recursive()**: Implements Longest Prefix Match (LPM) using binary search.
+  
+- **get_best_route()**: Wrapper function that calls `get_best_route_recursive()` with the appropriate parameters.
 
-(la fel fac si pt destination unreachable)
+- **get_arp_entry()**: Retrieves an ARP entry for a given IP address from the ARP table.
 
-- icmp_echo_reply:
-    - inversez adresele mac ale sursei si ale destinatiei
-    - apelez helper_icmp cu parametrii specifici echo_reply
+- **cmp()**: Comparison function for `qsort`, sorting `route_table` entries by mask and prefix for efficient LPM.
+
+- **function_ip_header()**: Updates fields of the IP header, avoiding code repetition.
+
+- **helper_icmp()**: Builds and sends an ICMP packet. Steps include:
+  - Constructing a new Ethernet header.
+  - Building an ICMP header.
+  - Copying IP and the first 8 bytes of the payload.
+  - Calculating checksums for both IP and ICMP headers.
+  - Sending the packet.
+
+- **send_icmp_timeout()**: Calls `helper_icmp` with parameters specific to an ICMP Timeout response.
+
+- **icmp_echo_reply()**: Handles ICMP Echo Reply by:
+  - Swapping source and destination MAC addresses.
+  - Calling `helper_icmp` with Echo Reply parameters.
+
+## File Structure
+
+- **main.c**: Initializes the router, processes packets in a loop, and manages ICMP handling.
+- **router.c**: Implements core dataplane functionality, including route lookup and packet forwarding.
+- **routing_table.c**: Loads and manages the static routing table from an input file.
+- **arp_table.c**: Manages ARP table lookups for IP to MAC resolution.
+- **icmp.c**: Contains functions for handling ICMP packets, including Timeout and Destination Unreachable messages.
+- **packet.c**: Defines packet structures and functions to manipulate packet headers.
+- **interface.c**: Manages the router’s interfaces and packet transmission.
+
+## How to Run
+
+1. **Compile the Project**:
+   ```bash
+   gcc -o router main.c router.c routing_table.c arp_table.c icmp.c packet.c interface.c
