@@ -1,0 +1,54 @@
+Repository for the first homework of the Communication Networks class. In this homework the students will implement the dataplane of a router.
+
+Subcerinte rezolvate:
+1. Procesul de dirijare
+2. LPM
+3. Protocolul ICMP
+
+Descriere rezolvare:
+
+in main:
+    - fac toate initializarile si alocarile necesare pt route_table
+    - folosesc arp static pentru aceasta implementare
+    - qsort folosit pt ordonarea route_table (pt cautarea binara)
+    - in bucla while imi procesez pachetele astfel:
+        - verific daca pachetul este de tip IP
+        - calculez checksum-ul cu functia din scheletul de cod
+        - calculez cea mai buna ruta posibila
+        - daca acea ruta este gasita, verific TTL
+            - daca TTL > 1 si daca pachetul este pt router, intra in cazul ICMP ECHO REPLY
+            - daca pachetul nu e pt router, se decrementeaza TTL-ul, recalculez checksumul, aflu next_destination cu functia get_arp_entry, copiez in dhost adresa mac a destinatiei urmatoare si apelez functia send_to_link.
+            - daca TTL <= 1, intra in cazul de ICMP TIMEOUT
+        - daca ruta nu e gasita, intra in cazul ICMP DESTINATION UREACHABLE
+
+- get_best_route_recursive:
+    - este LPM facut cu ajutorul cautarii binare
+
+- get_best_route:
+    - apelez functia recursiva cu parametrii corespunzatori
+
+- get_arp_entry:
+    - functia pt a gasi o intrare in tabela arp care are un anumit IP
+
+- cmp:
+    -functia pe care o folosesc pt qsort care sortaza dupa masca si prefix doua intrari in route_table
+
+- function_ip_header:
+    - functie pt a schimba campurile unui ip_hdr pt a nu avea cod repetitiv
+
+- helper_icmp
+    - construiesc un antet ETH nou
+    - construiesc un antet ICMP
+    - copiez ip-ul si primii 8 octeti din payload
+    - calculez checksumul pt antetul IP
+    - checksum pt icmp
+    - trimit pachetul
+
+- send_icmp_timeout:
+    - apelez functia helper_icmp cu parametrii pt un icmp timeout
+
+(la fel fac si pt destination unreachable)
+
+- icmp_echo_reply:
+    - inversez adresele mac ale sursei si ale destinatiei
+    - apelez helper_icmp cu parametrii specifici echo_reply
